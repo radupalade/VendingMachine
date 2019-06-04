@@ -7,12 +7,9 @@ public class Main {
         VendingMachineImpl vm = new VendingMachineImpl();
 
         vm.printStats();
-
+        vm.selectItemAndGetPrice(Item.TWIX);
         vm.insertCoin(Coin.TEN);
         vm.insertCoin(Coin.FIFTY);
-        vm.printStats();
-        vm.insertCoin(Coin.FIFTY);
-        vm.printStats();
         vm.collectItemAndChange();
         vm.printStats();
 

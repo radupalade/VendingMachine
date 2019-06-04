@@ -32,9 +32,10 @@ public class Inventory<T> {
 
     public void decrease(T item) {
         // "scoatem un item" / decrease
-        if (inventory.get(item) > 0) {
+        if (hasItem(item)) {
             inventory.put(item, (inventory.get(item) - 1));
         }
+
 
     }
 

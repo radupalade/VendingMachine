@@ -4,11 +4,11 @@ import java.util.List;
 
 public class VendingMachineImpl implements VendingMachine {
 
-    Inventory<Coin> cashInventory;
-    Inventory<Item> itemInventory;
-    long totalSales;
-    Item currentItem;
-    long currentBalance;
+    private Inventory<Coin> cashInventory;
+    private Inventory<Item> itemInventory;
+    private long totalSales;
+    private Item currentItem;
+    private long currentBalance;
 
     /*public VendingMachineImpl(Inventory<Coin> cashInventory, Inventory<Item> itemInventory, long totalSales, Item currentItem, long currentBalance) {
         this.cashInventory = cashInventory;
@@ -17,19 +17,17 @@ public class VendingMachineImpl implements VendingMachine {
         this.currentItem = currentItem;
         this.currentBalance = currentBalance;
     }*/
+    public VendingMachineImpl() {
+        initialize();
+    }
 
     public void initialize() {
-        itemInventory = new Inventory<>();
-        itemInventory.put(Item.BOUNTY, 4);
-        itemInventory.put(Item.MARS, 6);
-        itemInventory.put(Item.TWIX, 4);
-
-        cashInventory = new Inventory<>();
-
-        cashInventory.put(Coin.FIFTY, 4);
-        cashInventory.put(Coin.FIVE, 4);
-        cashInventory.put(Coin.TEN, 4);
-        cashInventory.put(Coin.TWENTY, 4);
+        for (Coin c : Coin.values()) {
+            cashInventory.put(c, 6);
+        }
+        for (Item i : Item.values()) {
+            itemInventory.put(i, 6);
+        }
     }
 
     @Override
@@ -67,7 +65,7 @@ public class VendingMachineImpl implements VendingMachine {
         return true;
     }
 
-    List<Coin> getChange(long amount) {
+    List<Coin> getChange(long amount) throws NotSufficientChangeException {
         //calculate the amount of money for change
         List<Coin> changes = Collections.EMPTY_LIST;
         changes = new LinkedList<>();
@@ -89,10 +87,14 @@ public class VendingMachineImpl implements VendingMachine {
                 changes.add(Coin.FIVE);
                 balance = balance - Coin.FIVE.getValue();
                 continue;
-            } else try {
+            } else {
+                throw new NotSufficientChangeException(("not sufficient change"));
+
+                /*try {
                 throw new NotSufficientChangeException(("Not Sufficient Change"));
             } catch (NotSufficientChangeException e) {
                 e.printStackTrace();
+            }*/
             }
         }
         return changes;
@@ -104,8 +106,12 @@ public class VendingMachineImpl implements VendingMachine {
 // TRY to getChange() for the current amount
 /* CATCH NotSufficientChangeException exception
 --- return 'true' if the change exists, 'false' otherwise*/
-        getChange(amount);
-        return false;
+        try {
+            getChange(amount);
+        } catch (NotSufficientChangeException e) {
+            return false;
+        }
+        return true;
     }
 
     boolean hasSufficientChange() {
@@ -129,12 +135,12 @@ public class VendingMachineImpl implements VendingMachine {
     }
 
     List<Coin> collectChange() throws NotSufficientChangeException {
-        List<Coin> refund = getChange(currentBalance);
-        updateCashInventory(refund);
+        List<Coin> change = getChange(currentBalance);
+        updateCashInventory(change);
         currentBalance = 0;
         currentItem = null;
 
-        return refund;
+        return change;
 /*
 --- calculate the amount of money to be returned
 --- call getChange() method to fill the list of 'Coin' objects to be returned
