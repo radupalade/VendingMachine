@@ -22,6 +22,8 @@ public class VendingMachineImpl implements VendingMachine {
     }
 
     public void initialize() {
+        cashInventory = new Inventory<>();
+        itemInventory = new Inventory<>();
         for (Coin c : Coin.values()) {
             cashInventory.put(c, 6);
         }
